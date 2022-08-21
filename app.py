@@ -20,7 +20,7 @@ import os
 # VAPOR, LUX, QUARTZ
 # external_stylesheets=[dbc.themes.QUARTZ]
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], meta_tags=[{'name': 'viewport','content': 'width=device-width, initial-scale=1.0'}])
-
+app.title = "DS Groups"
 server = app.server
 # Define callbacks
 

@@ -53,15 +53,15 @@ def read_in_history():
     collection = db["a"]
 
     history_from_mongo = list(collection.find())
-    
+    print(history_from_mongo)
     # sort history
     newlist = sorted(history_from_mongo, key=lambda d: datetime.strptime(d['time_period'].split("_")[0], "%m/%d/%Y"))
     
     history_dict = OrderedDict()
     for data in newlist:
         history_dict[data["time_period"]] = convert_from_str_to_fz(data["grouping"])
-    
-    return history_dict
+    print(newlist)
+    return history_dict, newlist[-1]
     
 def get_pairs_so_far(history):
     
@@ -160,33 +160,42 @@ def write_to_mongo(time_period, grouping, score):
 
 # read and write to database somehow
 def main():
+    
     people = ["Bridget", "Bud", "Carly", "Cody", "Denis", "Eunice", "Jie", "Jonathan", "Kelly", "Kirtiraj", "Kyle B.", "Kyle C.", "Mohar", "Piyush", "Stan"]
 
-    history = read_in_history()
+    history, most_recent_group = read_in_history()
     
-    pairs_so_far = get_pairs_so_far(history)
+    most_recent_end_date = most_recent_group["time_period"].split("_")[-1] 
     
-    # n param determines number of sample groupings taken
-    scores_dict, freq = generate_random_groups(people = people, pairs_so_far = pairs_so_far, n = 1000)
+    today = date.today().strftime("%m/%d/%Y")
+    # so the monday after the friday of the most recent time period
+    date_to_update = (datetime.strptime(most_recent_end_date, "%m/%d/%Y") + timedelta(days=3)).strftime("%m/%d/%Y")
     
-    final_group = choose_best_sampled_group(sample_score_dict = scores_dict)
-    
-    best_score_of_samples = scores_dict[final_group]
-    # print(f"best score sampled: {best_score_of_samples}")
-    
-    new_grouping = convert_from_fz_to_str(final_group)
-    
-    today = date.today()
-    # get the next next Friday
-    end_date = today + relativedelta(weekday=FR(+2))
-    today_mdy = today.strftime("%m/%d/%Y")
-    end_mdy = end_date.strftime("%m/%d/%Y")
-    
-    time_period = today_mdy + "_" + end_mdy
-    
-    write_to_mongo(time_period = time_period, grouping = new_grouping, score = best_score_of_samples)
-    
-    return
+    if today == date_to_update: #"08/21/2022"
+
+        pairs_so_far = get_pairs_so_far(history)
+        
+        # n param determines number of sample groupings taken
+        scores_dict, freq = generate_random_groups(people = people, pairs_so_far = pairs_so_far, n = 1000)
+        
+        final_group = choose_best_sampled_group(sample_score_dict = scores_dict)
+        
+        best_score_of_samples = scores_dict[final_group]
+        # print(f"best score sampled: {best_score_of_samples}")
+        
+        new_grouping = convert_from_fz_to_str(final_group)
+        
+        today = date.today()
+        # get the next next Friday
+        end_date = today + relativedelta(weekday=FR(+2))
+        today_mdy = today.strftime("%m/%d/%Y")
+        end_mdy = end_date.strftime("%m/%d/%Y")
+        
+        time_period = today_mdy + "_" + end_mdy
+        
+        write_to_mongo(time_period = time_period, grouping = new_grouping, score = best_score_of_samples)
+        
+        return
 
 if __name__ == "__main__":
     main()

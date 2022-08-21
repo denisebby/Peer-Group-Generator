@@ -3,7 +3,7 @@ from bson import ObjectId
 
 import os
 
-def write_to_mongo(time_period, grouping, score):
+def write_to_mongo():
     client = pymongo.MongoClient(os.environ.get("DATABASE_URL"))
 
     db = client["peers"]
