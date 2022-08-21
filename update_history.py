@@ -9,6 +9,8 @@ from collections import OrderedDict, defaultdict
 
 import pymongo
 
+import os
+
 # history = OrderedDict()
 # history["07/25/2022_8/05/2022"] =  frozenset({frozenset({"Mohar", "Kirtiraj", "Jie"}), 
 #                       frozenset({"Kelly", "Kyle C.", "Jonathan"}),
@@ -44,7 +46,7 @@ def convert_from_str_to_fz(s):
     return frozenset(res2)
 
 def read_in_history():
-    client = pymongo.MongoClient("mongodb+srv://denisebby:giraffe2Dorne@cluster0.jkf2qtl.mongodb.net/?retryWrites=true&w=majority")
+    client = pymongo.MongoClient(os.environ.get("DATABASE_URL"))
     print("read data from mongo")
 
     db = client["peers"]
@@ -138,7 +140,7 @@ def choose_best_sampled_group(sample_score_dict):
             return k
 
 def write_to_mongo(time_period, grouping, score):
-    client = pymongo.MongoClient("mongodb+srv://denisebby:giraffe2Dorne@cluster0.jkf2qtl.mongodb.net/?retryWrites=true&w=majority")
+    client = pymongo.MongoClient(os.environ.get("DATABASE_URL"))
 
     db = client["peers"]
     collection = db["a"]

@@ -1,9 +1,10 @@
 import pymongo
 from bson import ObjectId
 
+import os
 
 def write_to_mongo(time_period, grouping, score):
-    client = pymongo.MongoClient("mongodb+srv://denisebby:giraffe2Dorne@cluster0.jkf2qtl.mongodb.net/?retryWrites=true&w=majority")
+    client = pymongo.MongoClient(os.environ.get("DATABASE_URL"))
 
     db = client["peers"]
     collection = db["example"]

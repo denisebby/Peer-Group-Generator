@@ -13,6 +13,8 @@ import pymongo
 from collections import OrderedDict, defaultdict
 from datetime import date, datetime, timedelta
 
+import os
+
 
 # Define app
 # VAPOR, LUX, QUARTZ
@@ -139,7 +141,7 @@ app.layout = html.Div([ dcc.Store(id="navbar-example-input", data=""), navbar, d
     Output("cards", "children"), [Input("cards-input", "data")]
 )
 def get_data_and_cards(data_input):
-    client = pymongo.MongoClient("mongodb+srv://denisebby:giraffe2Dorne@cluster0.jkf2qtl.mongodb.net/?retryWrites=true&w=majority")
+    client = pymongo.MongoClient(os.environ.get("DATABASE_URL"))
     print("read data from mongo")
 
     db = client["peers"]
@@ -177,7 +179,7 @@ def get_data_and_cards(data_input):
     Output("navbar-example-update", "brand"), [Input("navbar-example-input", "data")]
 )
 def get_example_update(data_input):
-    client = pymongo.MongoClient("mongodb+srv://denisebby:giraffe2Dorne@cluster0.jkf2qtl.mongodb.net/?retryWrites=true&w=majority")
+    client = pymongo.MongoClient(os.environ.get("DATABASE_URL"))
     print("read data from mongo - example")
 
     db = client["peers"]
