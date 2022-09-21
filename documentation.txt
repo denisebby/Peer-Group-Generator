@@ -1,0 +1,2 @@
+I used dashtools to deploy on heroku. 
+I used env variables so as to not expose my mongo db password.
